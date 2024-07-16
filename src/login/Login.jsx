@@ -4,15 +4,18 @@ import {
     useState,
 } from "react";
 import { Helmet } from "react-helmet";
-import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 import "animate.css";
+import useAxiosPublic from "../hooks/useAxiosPublic";
+import Swal from "sweetalert2";
 
 const Login = () => {
-    const userData = useLoaderData();
+    // const userData = useLoaderData();
     const [error, setError] = useState();
     const [showPIN, setShowPIN] = useState(false);
     const navigate = useNavigate();
+    const axiosPublic = useAxiosPublic();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -30,17 +33,25 @@ const Login = () => {
         }
         setError("");
 
-        const user = userData.find(
-            (item) => item?.email === email && item?.PIN === PIN
-        );
-        console.log(user._id);
-        if (user) {
-            alert("Login Successful");
-            navigate(`/dashboard/${user._id}`);
-        } else {
-            alert("Invalid Credentials");
-            return;
-        }
+        const user = { email, PIN };
+        axiosPublic.post("/login", user)
+        .then((res) => {
+            console.log(res.status);
+            if (res.status === 200) {
+                Swal.fire({
+                    title: 'Login Successful!',
+                    // text: 'Do you want to continue',
+                    icon: 'success',
+                    confirmButtonText: 'Cool',
+                    confirmButtonColor: "#87CEEB"
+                  })
+                navigate(`/dashboard/${user.email}`);
+            }
+           else {
+                alert("Invalid Credentials");
+                return;
+            }
+        });
     };
 
     return (

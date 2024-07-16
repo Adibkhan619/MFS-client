@@ -12,6 +12,7 @@ import AgentDashboard from "./agentDashboard.jsx/AgentDashboard";
 import UserDashboard from "./userDashboard/UserDashboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./dashboard/Dashboard";
+import SendMoney from "./userDashboard/SendMoney";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -42,6 +43,7 @@ const router = createBrowserRouter([
                 path: "/dashboard/:email",
                 element: <Dashboard></Dashboard>,
                 loader: ({params}) => fetch(`http://localhost:5000/users/${params.email}`),
+             
             },
         ],
     },

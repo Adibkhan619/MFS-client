@@ -1,4 +1,4 @@
-import { useLoaderData, useParams } from "react-router-dom";
+import { Outlet, useLoaderData, useParams } from "react-router-dom";
 import useAllUsers from "../hooks/useAllUsers";
 import AgentDashboard from "../agentDashboard.jsx/AgentDashboard";
 import UserDashboard from "../userDashboard/UserDashboard";
@@ -19,14 +19,15 @@ const Dashboard = () => {
 
     return (
         <div>
+            {/* <Outlet></Outlet> */}
             {
-                userData.role === "Agent" && <AgentDashboard></AgentDashboard>
+                userData.role === "Agent" && <AgentDashboard user={userData}></AgentDashboard>
             }
             {
                 userData.role === "User" && <UserDashboard user={userData}></UserDashboard>
             }
             {
-                userData.role === "Admin" && <AdminDashboard></AdminDashboard>
+                userData.role === "Admin" && <AdminDashboard user={userData}></AdminDashboard>
             }
         </div>
     );

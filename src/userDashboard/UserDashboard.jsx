@@ -3,6 +3,7 @@ import { useState } from "react";
 import useAllUsers from "../hooks/useAllUsers";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 
+
 const UserDashboard = ({ user }) => {
     const axiosPublic = useAxiosPublic()
     const [users] = useAllUsers()
@@ -52,10 +53,10 @@ const UserDashboard = ({ user }) => {
             return
         }
         const request = "cashIn"
-
+        const status = "Pending"
         const amount = parseFloat(form.amount.value);
         const email = user.email
-        const cashIn = { agent, amount, request, email, name };
+        const cashIn = { agent, amount, request, email, name, status };
 
         const PIN = form.PIN.value;
         if(PIN !== user.PIN){
@@ -77,10 +78,16 @@ const UserDashboard = ({ user }) => {
             alert('Enter Valid agent No.')
             return
         }
-        const request = "cashOut"
         const amount = parseFloat(form.amount.value);
+        if(user.balance< amount){
+            return alert('You do not have sufficient amount to cash-out')
+        }
+        const status = "Pending"
+        const request = "cashOut"
+        
         const email = user.email
-        const cashOut = { agent, amount, request, email, name };
+        
+        const cashOut = { agent, amount, request, email, name, status };
 
         const PIN = form.PIN.value;
         if(PIN !== user.PIN){
@@ -88,25 +95,22 @@ const UserDashboard = ({ user }) => {
             return
         }
         axiosPublic.post("/transactions", cashOut  )
-        return alert("Cash In request sent to the agent and waiting for approval")    
+        return alert("Cash out request sent to the agent and waiting for approval")    
     };
 
     return (
         <div className=" mx-auto">
-            <h1>User dashboard</h1>
-            <h1></h1>
+
             <div className="  ">
-                <figure>
-                    {/* <img
-      src="https://img.daisyui.com/images/stock/photo-1606107557195-0e29a4b5b4aa.jpg"
-      alt="Shoes" /> */}
-                </figure>
+
                 <div className="text-center">
                     <h2 className="text-2xl"> {user.name}</h2>
+                    <h2 className="text-2xl"> {user.email}</h2>
+                    <h2 className="text-2xl"> {user.mobile}</h2>
                     <h2 className=" text-4xl">Balance: {user.balance}</h2>
 
                     <div className="mx-auto flex justify-center mt-10">
-                        {user.balance === !0 ? (
+                        {user.status !== "Pending" ? (
                             <h1 className="text-lg">
                                 Your Account is waiting for approval
                             </h1>
