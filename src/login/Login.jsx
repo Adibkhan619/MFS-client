@@ -1,49 +1,45 @@
-
-import { 
+import {
     // useContext,
-    //  useEffect, 
-     useState } from "react";
+    //  useEffect,
+    useState,
+} from "react";
 import { Helmet } from "react-helmet";
-import { Link,   useLoaderData,  useNavigate } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 import "animate.css";
 
-
 const Login = () => {
-    const userData = useLoaderData()
+    const userData = useLoaderData();
     const [error, setError] = useState();
     const [showPIN, setShowPIN] = useState(false);
     const navigate = useNavigate();
-
 
     const handleRegister = async (e) => {
         e.preventDefault();
         const form = new FormData(e.currentTarget);
         const email = form.get("email");
         const PIN = form.get("PIN");
-        
 
         if (PIN.length !== 4) {
             setError("PIN must be 4 characters");
             return;
         }
         if (!/^\d+$/.test(PIN)) {
-            setError(
-                "PIN must be numerical."
-            );
+            setError("PIN must be numerical.");
             return;
         }
         setError("");
 
-        const user = userData.filter(item => item?.email === email && item?.PIN === PIN)
+        const user = userData.filter(
+            (item) => item?.email === email && item?.PIN === PIN
+        );
         console.log(user);
-        if(user.length === 1){
-            alert('Login Successful')
-            navigate("/")
-        }
-        else{
-            alert("Invalid Credentials")
-            return
+        if (user.length === 1) {
+            alert("Login Successful");
+            navigate("/");
+        } else {
+            alert("Invalid Credentials");
+            return;
         }
     };
 
@@ -54,15 +50,12 @@ const Login = () => {
                     <title>Login</title>
                 </Helmet>
                 <div className="">
-                 
                     <div className=" px-5 max-w-lg mx-auto lg:px-16 lg:gap-10 ">
-              
                         <div className="card  mt-5  w-full  shadow-2xl bg-opacity-85 animate__fadeInDown animate__animated">
                             <form
                                 onSubmit={handleRegister}
                                 className="card-body "
                             >
-                               
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text font-semibold text-lg">
@@ -77,7 +70,7 @@ const Login = () => {
                                         required
                                     />
                                 </div>
-                                
+
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text font-semibold text-lg">
@@ -86,11 +79,7 @@ const Login = () => {
                                     </label>
                                     <div className="inline-flex">
                                         <input
-                                            type={
-                                                showPIN
-                                                    ? "text"
-                                                    : "PIN"
-                                            }
+                                            type={showPIN ? "text" : "PIN"}
                                             name="PIN"
                                             placeholder="PIN"
                                             className="input w-full  input-bordered"
@@ -98,9 +87,7 @@ const Login = () => {
                                         />
                                         <span
                                             className="relative text-lg right-7 top-4 text-gray-400"
-                                            onClick={() =>
-                                                setShowPIN(!showPIN)
-                                            }
+                                            onClick={() => setShowPIN(!showPIN)}
                                         >
                                             <IoMdEye />
                                         </span>
@@ -110,7 +97,7 @@ const Login = () => {
                                         {error}
                                     </small>
                                 </div>
-                              
+
                                 <div className="form-control mt-6">
                                     <button
                                         type="submit"
@@ -134,7 +121,6 @@ const Login = () => {
                         </div>
                     </div>
                 </div>
-                {/* <ToastContainer /> */}
             </div>
         </div>
     );

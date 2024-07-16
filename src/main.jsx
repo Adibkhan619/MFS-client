@@ -10,6 +10,9 @@ import Root from './root/Root';
 import Home from './home/Home';
 import Register from './register/Register';
 import Login from './login/Login';
+import AdminDashboard from './adminDashboard/AdminDashboard';
+import AgentDashboard from './agentDashboard.jsx/AgentDashboard';
+import UserDashboard from './userDashboard/UserDashboard';
 
 
   const router = createBrowserRouter([
@@ -20,6 +23,21 @@ import Login from './login/Login';
         {
             path: "/",
             element: <Home></Home>
+        },
+        {
+            path: "/adminDashboard",
+            element: <AdminDashboard></AdminDashboard>,
+            loader: ()=> fetch("http://localhost:5000/users") 
+        },
+        {
+            path: "/agentDashboard",
+            element: <AgentDashboard></AgentDashboard>,
+            loader: ()=> fetch("http://localhost:5000/users") 
+        },
+        {
+            path: "/userDashboard",
+            element: <UserDashboard></UserDashboard>,
+            loader: ()=> fetch("http://localhost:5000/users") 
         }
       ]
     },

@@ -18,7 +18,6 @@ const Register = () => {
     const navigate = useNavigate();
 
 
-
     const handleRegister = async (e) => {
         e.preventDefault();
         const form = new FormData(e.currentTarget);
@@ -28,13 +27,14 @@ const Register = () => {
         const PIN = form.get("PIN");
         const money = parseFloat(20)
         const role = "user"
+        const status = "Pending"
 
 
-        const userData= {name, email, mobile, PIN, money, role}  ;
+        const userData= {name, email, mobile, PIN, money, role, status}  ;
         console.log(userData);
 
-        if (PIN.length !== 4) {
-            setError("PIN must be 4 characters");
+        if (PIN.length !== 5) {
+            setError("PIN must be 5 characters");
             return;
         }
         if (!/^\d+$/.test(PIN)) {
@@ -48,6 +48,7 @@ const Register = () => {
        axios.post("http://localhost:5000/users", userData)
        .then(res => {
         console.log(res.data);
+        navigate("/")
        })
     };
 
