@@ -4,21 +4,16 @@ import {
     //  useEffect, 
      useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link,  useLoaderData,  useNavigate } from "react-router-dom";
-// import { AuthContext } from "../provider/AuthProvider";
-// import toast, { Toaster } from 'react-hot-toast';
+import { Link,   useLoaderData,  useNavigate } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
-// import { updateProfile } from "firebase/auth";
 import "animate.css";
-import axios from "axios";
+
 
 const Login = () => {
-    // const { createUser, setUser, user, loading } = useContext(AuthContext);
     const userData = useLoaderData()
     const [error, setError] = useState();
     const [showPIN, setShowPIN] = useState(false);
-    // const navigate = useNavigate();
-
+    const navigate = useNavigate();
 
 
     const handleRegister = async (e) => {
@@ -27,9 +22,6 @@ const Login = () => {
         const email = form.get("email");
         const PIN = form.get("PIN");
         
-
-        // const userData= {email,  PIN}  ;
-        // console.log(userData);
 
         if (PIN.length !== 4) {
             setError("PIN must be 4 characters");
@@ -43,19 +35,23 @@ const Login = () => {
         }
         setError("");
 
-        const user = userData.filter(item => item.email === email && item.PIN === PIN)
+        const user = userData.filter(item => item?.email === email && item?.PIN === PIN)
         console.log(user);
-    //    axios.post("http://localhost:5000/users", userData)
-    //    .then(res => {
-    //     console.log(res.data);
-    //    })
+        if(user.length === 1){
+            alert('Login Successful')
+            navigate("/")
+        }
+        else{
+            alert("Invalid Credentials")
+            return
+        }
     };
 
     return (
         <div>
             <div>
                 <Helmet>
-                    <title>Register</title>
+                    <title>Login</title>
                 </Helmet>
                 <div className="">
                  
