@@ -1,10 +1,12 @@
-import axios from "axios";
+
+import { useState } from "react";
 import useAllUsers from "../hooks/useAllUsers";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 
 const UserDashboard = ({ user }) => {
     const axiosPublic = useAxiosPublic()
     const [users] = useAllUsers()
+    const [moneyChange, setMoneyChange] = useState();
     console.log(user);
 
     // SEND MONEY ------->
@@ -13,7 +15,17 @@ const UserDashboard = ({ user }) => {
         const form = e.target;
         const mobile = form.mobile.value;
         const amount = parseFloat(form.amount.value);
-        console.log({ mobile, amount });
+        setMoneyChange(amount)
+        
+
+        axiosPublic.patch(`/send-money/${mobile}`, 
+            {moneyChange: parseFloat(moneyChange)},
+        )
+        axiosPublic.patch(`/reduce-money/${user._id}`, 
+            {moneyChange: parseFloat(-moneyChange)},
+        )
+
+        alert(`${amount} money successfully sent to ${mobile}`)
     };
 
     // CASH IN --------->
@@ -37,13 +49,8 @@ const UserDashboard = ({ user }) => {
             alert("Invalid PIN")
             return
         }
-        axiosPublic.post("/transaction", cashIn  )
-
-
-
-        return alert("Cash In request sent to the agent and waiting for approval")
-
-        
+        axiosPublic.post("/transactions", cashIn  )
+        return alert("Cash In request sent to the agent and waiting for approval")    
     };
 
     return (
