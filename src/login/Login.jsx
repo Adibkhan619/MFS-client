@@ -1,9 +1,10 @@
+
 import { 
     // useContext,
     //  useEffect, 
      useState } from "react";
 import { Helmet } from "react-helmet";
-import { Link,  useNavigate } from "react-router-dom";
+import { Link,  useLoaderData,  useNavigate } from "react-router-dom";
 // import { AuthContext } from "../provider/AuthProvider";
 // import toast, { Toaster } from 'react-hot-toast';
 import { IoMdEye } from "react-icons/io";
@@ -11,27 +12,24 @@ import { IoMdEye } from "react-icons/io";
 import "animate.css";
 import axios from "axios";
 
-const Register = () => {
+const Login = () => {
     // const { createUser, setUser, user, loading } = useContext(AuthContext);
+    const userData = useLoaderData()
     const [error, setError] = useState();
     const [showPIN, setShowPIN] = useState(false);
-    const navigate = useNavigate();
+    // const navigate = useNavigate();
 
 
 
     const handleRegister = async (e) => {
         e.preventDefault();
         const form = new FormData(e.currentTarget);
-        const name = form.get("name");
         const email = form.get("email");
-        const mobile = form.get("mobile");
         const PIN = form.get("PIN");
-        const money = parseFloat(20)
-        const role = "user"
+        
 
-
-        const userData= {name, email, mobile, PIN, money, role}  ;
-        console.log(userData);
+        // const userData= {email,  PIN}  ;
+        // console.log(userData);
 
         if (PIN.length !== 4) {
             setError("PIN must be 4 characters");
@@ -45,10 +43,12 @@ const Register = () => {
         }
         setError("");
 
-       axios.post("http://localhost:5000/users", userData)
-       .then(res => {
-        console.log(res.data);
-       })
+        const user = userData.filter(item => item.email === email && item.PIN === PIN)
+        console.log(user);
+    //    axios.post("http://localhost:5000/users", userData)
+    //    .then(res => {
+    //     console.log(res.data);
+    //    })
     };
 
     return (
@@ -66,20 +66,7 @@ const Register = () => {
                                 onSubmit={handleRegister}
                                 className="card-body "
                             >
-                                <div className="form-control">
-                                    <label className="label">
-                                        <span className="label-text font-semibold text-lg">
-                                            Name
-                                        </span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="name"
-                                        placeholder="Name"
-                                        className="input input-bordered   "
-                                        required
-                                    />
-                                </div>
+                               
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text font-semibold text-lg">
@@ -94,19 +81,7 @@ const Register = () => {
                                         required
                                     />
                                 </div>
-                                <div className="form-control">
-                                    <label className="label">
-                                        <span className="label-text font-semibold text-lg">
-                                            Mobile No
-                                        </span>
-                                    </label>
-                                    <input
-                                        type="text"
-                                        name="mobile"
-                                        placeholder="Mobile"
-                                        className="input input-bordered  "
-                                    />
-                                </div>
+                                
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text font-semibold text-lg">
@@ -145,17 +120,17 @@ const Register = () => {
                                         type="submit"
                                         className="btn border-none font-bold text-gray-800 text-lg bg-amber-300 w-full "
                                     >
-                                        Register
+                                        Login
                                     </button>
                                 </div>
                                 <p className="text-gray-500">
-                                    <small>Already have an account? </small>
+                                    <small>Do not have an account? </small>
                                     <Link
-                                        to="/login"
+                                        to="/register"
                                         className="hover:text-blue-500"
                                     >
                                         <small>
-                                            <strong>Login</strong>
+                                            <strong>Register</strong>
                                         </small>
                                     </Link>
                                 </p>
@@ -169,4 +144,4 @@ const Register = () => {
     );
 };
 
-export default Register;
+export default Login;
