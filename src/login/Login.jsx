@@ -20,8 +20,8 @@ const Login = () => {
         const email = form.get("email");
         const PIN = form.get("PIN");
 
-        if (PIN.length !== 4) {
-            setError("PIN must be 4 characters");
+        if (PIN.length !== 5) {
+            setError("PIN must be 5 characters");
             return;
         }
         if (!/^\d+$/.test(PIN)) {
@@ -30,13 +30,13 @@ const Login = () => {
         }
         setError("");
 
-        const user = userData.filter(
+        const user = userData.find(
             (item) => item?.email === email && item?.PIN === PIN
         );
-        console.log(user);
-        if (user.length === 1) {
+        console.log(user._id);
+        if (user) {
             alert("Login Successful");
-            navigate("/");
+            navigate(`/dashboard/${user._id}`);
         } else {
             alert("Invalid Credentials");
             return;

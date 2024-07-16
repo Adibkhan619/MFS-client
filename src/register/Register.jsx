@@ -1,7 +1,4 @@
-import { 
-    // useContext,
-    //  useEffect, 
-     useState } from "react";
+import { useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link,  useNavigate } from "react-router-dom";
 // import { AuthContext } from "../provider/AuthProvider";
@@ -10,13 +7,16 @@ import { IoMdEye } from "react-icons/io";
 // import { updateProfile } from "firebase/auth";
 import "animate.css";
 import axios from "axios";
+import Swal from "sweetalert2";
+import useAxiosPublic from "../hooks/useAxiosPublic";
+// import { AuthContext } from "../provider/AuthProvider";
 
 const Register = () => {
     // const { createUser, setUser, user, loading } = useContext(AuthContext);
     const [error, setError] = useState();
     const [showPIN, setShowPIN] = useState(false);
     const navigate = useNavigate();
-
+    const axiosPublic = useAxiosPublic()
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -25,13 +25,9 @@ const Register = () => {
         const email = form.get("email");
         const mobile = form.get("mobile");
         const PIN = form.get("PIN");
-        const money = parseFloat(20)
+        const balance = parseFloat(0)
         const role = "User"
         const status = "Pending"
-
-
-        const userData= {name, email, mobile, PIN, money, role, status}  ;
-        console.log(userData);
 
         if (PIN.length !== 5) {
             setError("PIN must be 5 characters");
@@ -45,7 +41,31 @@ const Register = () => {
         }
         setError("");
 
-       axios.post("http://localhost:5000/users", userData)
+        const userData= {name, email, mobile, PIN, balance, role, status}  ;
+        console.log(userData);
+
+        axiosPublic.post("/users", userData)
+        .then(res => {
+            console.log(res.data);
+
+            if(res.data.insertedId){
+                 Swal.fire({
+        title: 'Successfully Registered!',
+        // text: 'Do you want to continue',
+        icon: 'success',
+        confirmButtonText: 'Cool',
+        confirmButtonColor: "#87CEEB"
+      })
+      navigate(`/dashboard/${email}`)
+            }
+        })
+  
+
+
+
+
+
+       axios.post("http://localhost:5000/users", )
        .then(res => {
         console.log(res.data);
         navigate("/")

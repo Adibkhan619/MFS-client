@@ -11,6 +11,7 @@ import AdminDashboard from "./adminDashboard/AdminDashboard";
 import AgentDashboard from "./agentDashboard.jsx/AgentDashboard";
 import UserDashboard from "./userDashboard/UserDashboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import Dashboard from "./dashboard/Dashboard";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -22,20 +23,25 @@ const router = createBrowserRouter([
                 path: "/",
                 element: <Home></Home>,
             },
+            // {
+            //     path: "/adminDashboard",
+            //     element: <AdminDashboard></AdminDashboard>,
+            //     loader: () => fetch("http://localhost:5000/users"),
+            // },
+            // {
+            //     path: "/agentDashboard",
+            //     element: <AgentDashboard></AgentDashboard>,
+            //     loader: () => fetch("http://localhost:5000/users"),
+            // },
+            // {
+            //     path: "/userDashboard",
+            //     element: <UserDashboard></UserDashboard>,
+            //     loader: () => fetch("http://localhost:5000/users"),
+            // },
             {
-                path: "/adminDashboard",
-                element: <AdminDashboard></AdminDashboard>,
-                loader: () => fetch("http://localhost:5000/users"),
-            },
-            {
-                path: "/agentDashboard",
-                element: <AgentDashboard></AgentDashboard>,
-                loader: () => fetch("http://localhost:5000/users"),
-            },
-            {
-                path: "/userDashboard",
-                element: <UserDashboard></UserDashboard>,
-                loader: () => fetch("http://localhost:5000/users"),
+                path: "/dashboard/:email",
+                element: <Dashboard></Dashboard>,
+                loader: ({params}) => fetch(`http://localhost:5000/users/${params.email}`),
             },
         ],
     },
