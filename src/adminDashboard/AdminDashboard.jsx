@@ -1,15 +1,14 @@
-import axios from "axios";
-import { useState } from "react";
-import { useLoaderData } from "react-router-dom";
+
+import Swal from "sweetalert2";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import useAllUsers from "../hooks/useAllUsers";
 
 const AdminDashboard = () => {
     // const [moneyToAdd, setMoneyToAdd] = useState('');
     const axiosPublic = useAxiosPublic()
-    const [users, loading, refetch] = useAllUsers()
-    const userData = useLoaderData()
-    console.log(userData);
+    const [users, , refetch] = useAllUsers()
+    
+
 
 
     const makeAgent = (item) => {
@@ -21,7 +20,7 @@ const AdminDashboard = () => {
             if (res.data.modifiedCount > 0) {
                 refetch();
                 Swal.fire({
-                    title: `${user.displayName || user.name} is an Admin Now!`,
+                    title: `${item.displayName || item.name} is an Agent Now!`,
                     showClass: {
                         popup: `
                         animate__animated
@@ -41,7 +40,17 @@ const AdminDashboard = () => {
         })
     }
 
-
+    const handleActivate = (item) =>{
+        axiosPublic.patch(`/users/active/${item._id}`,
+            {status : "Active"}
+        )
+        .then(res =>{
+            console.log(res.data);
+            if (res.data.modifiedCount > 0) {
+                refetch();
+            }
+        })
+    }
 
 
 
@@ -70,19 +79,19 @@ const AdminDashboard = () => {
                   <tbody>
                     {/* row 1 */}
                     {
-                        userData.map((item, idx) => <tr key={item._id}>
+                        users.map((item, idx) => <tr key={item._id}>
                         <th>{idx + 1}</th>
                         <td>{item.name}</td>
                         <td>{item.email}</td>
                         <td>{item.mobile}</td>
                         <td>{item.role}</td>
-                        <td>{item.status}</td>
-                       
-                    
+                        <td>
+                            {item.status ==="Pending" ? (<p className="text-pink-400">Pending</p>) : (<p className="text-green-400">Active</p>) }
+                        </td>                 
                         {
-                            item?.status ==="Pending" ?  (<td><button className="btn ">Activate</button></td>) : <td>Active</td>
-                        }
-                    
+                            item?.status ==="Pending" && 
+                             <td><button onClick={() => handleActivate(item)} className="btn ">Activate</button></td>      
+                        }       
                     {
                         item?.role === "user" && (
                             <td><button onClick={() => makeAgent(item)} className="btn">Make Agent</button></td>

@@ -26,7 +26,7 @@ const Register = () => {
         const mobile = form.get("mobile");
         const PIN = form.get("PIN");
         const money = parseFloat(20)
-        const role = "user"
+        const role = "User"
         const status = "Pending"
 
 
