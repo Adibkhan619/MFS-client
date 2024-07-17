@@ -137,14 +137,15 @@ const UserDashboard = ({ currentUser }) => {
         const email = user.email
         const userMobile = user.mobile
         const PIN = form.PIN.value;
+        const id = user._id
         
-        const cashOut = { agent, amount, request, type, email, name, status, userMobile };
+        const cashOut = { agent, amount, request, type, id, email, name, status, userMobile };
 
         try {
             const response = await axiosPublic.post('/validate-pin', { name, PIN });
       
             if (response.data.valid) {
-              const transactionResponse = await axiosPublic.post("/cash-in", cashOut  );
+              const transactionResponse = await axiosPublic.post("/cash-out", cashOut  );
               console.log(transactionResponse.data);
               Swal.fire({
                 title: 'Cash Out request sent to the agent and waiting for approval',
