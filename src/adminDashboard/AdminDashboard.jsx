@@ -1,6 +1,7 @@
 import Swal from "sweetalert2";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import useAllUsers from "../hooks/useAllUsers";
+import { Link } from "react-router-dom";
 
 const AdminDashboard = () => {
     // const [moneyToAdd, setMoneyToAdd] = useState('');
@@ -48,6 +49,32 @@ const AdminDashboard = () => {
             .then((res) => {
                 console.log(res.data);
                 if (res.data.modifiedCount > 0) {
+                    Swal.fire({
+                        title: `${item.name} is Activated and 40 BDT has been credited into the account`,
+                        // text: 'Do you want to continue',
+                        icon: 'success',
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: "#87CEEB"
+                      })
+                    refetch();
+                }
+            });
+    };
+
+    const handleBlock = (item) => {
+        axiosPublic
+            .patch(`/users/block/${item._id}`, {
+                status: "Blocked",
+            })
+            .then((res) => {
+                console.log(res.data);
+                if (res.data.modifiedCount > 0) {
+                    Swal.fire({
+                        title: `${item.name} has been Blocked`,
+                        icon: 'success',
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: "#87CEEB"
+                      })
                     refetch();
                 }
             });
@@ -56,7 +83,8 @@ const AdminDashboard = () => {
     return (
         <div>
             <h1>Hello Admin</h1>
-
+            <Link to="/transactions"><button className="btn">Transactions</button></Link>
+            
             <div className="overflow-x-auto">
                 <table className="table">
                     {/* head */}
@@ -80,27 +108,49 @@ const AdminDashboard = () => {
                                 <td>{item.mobile}</td>
                                 <td>{item.role}</td>
                                 <td>
-                                    {item.status === "Pending" ? (
-                                        <p className="text-pink-400">Pending</p>
-                                    ) : (
-                                        <p className="text-green-400">Active</p>
+                                    {item.status === "Pending" && (
+                                        <p className="text-orange-400 p-2 bg-slate-100 text-center font-bold">Pending</p>
+                                    )} 
+                                     {
+                                     item.status === "Active" &&(
+                                        <p className="text-green-400 p-2 bg-slate-100 text-center font-bold">Active</p>
                                     )}
+                                     {
+                                     item.status === "Blocked" &&(
+                                        <p className="text-red-400 p-2 bg-slate-100 text-center font-bold">Blocked</p>
+                                    )}
+
+                             
+
                                 </td>
-                                {item?.status === "Pending" && (
+                                {item?.status === "Pending" || item?.status ==="Blocked" ? (
                                     <td>
                                         <button
                                             onClick={() => handleActivate(item)}
-                                            className="btn "
+                                            className="btn bg-green-300"
                                         >
                                             Activate
                                         </button>
                                     </td>
-                                )}
-                                {item?.role === "user" && (
+                                )
+                                :
+                                (
+                                    <td>
+                                        <button
+                                            onClick={() => handleBlock(item)}
+                                            className="btn btn-outline text-red-400"
+                                        >
+                                            Block
+                                        </button>
+                                    </td>
+                                )
+                               
+                            }
+                                {item?.role === "User" && (
                                     <td>
                                         <button
                                             onClick={() => makeAgent(item)}
-                                            className="btn"
+                                            className="btn btn-outline text-sky-400"
                                         >
                                             Make Agent
                                         </button>

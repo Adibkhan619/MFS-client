@@ -1,4 +1,4 @@
-import { Outlet, useLoaderData, useParams } from "react-router-dom";
+import {  useLoaderData, useParams } from "react-router-dom";
 import useAllUsers from "../hooks/useAllUsers";
 import AgentDashboard from "../agentDashboard.jsx/AgentDashboard";
 import UserDashboard from "../userDashboard/UserDashboard";
@@ -6,16 +6,16 @@ import AdminDashboard from "../adminDashboard/AdminDashboard";
 
 const Dashboard = () => {
     const [users] = useAllUsers()
-    console.log(users);
+    // console.log(users);
     const getUser = useParams()
-    console.log(getUser);
+    // console.log(getUser);
 
     
     const user = users.find(item => item.email === getUser.email)
-    console.log(user?.email);
+    // console.log(user?.email);
 
     const userData = useLoaderData()
-    console.log(userData);
+    // console.log(userData);
 
     return (
         <div>

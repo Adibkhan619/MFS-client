@@ -2,13 +2,14 @@
 import { useState } from "react";
 import useAllUsers from "../hooks/useAllUsers";
 import useAxiosPublic from "../hooks/useAxiosPublic";
+import Swal from "sweetalert2";
 
 
 const UserDashboard = ({ user }) => {
     const axiosPublic = useAxiosPublic()
     const [users] = useAllUsers()
-    const [moneyChange, setMoneyChange] = useState();
-    console.log(user);
+    const [moneyChange, setMoneyChange] = useState("");
+    // console.log(user);
 
     // SEND MONEY ------->
     const handleSendMoney = async (e) => {
@@ -19,26 +20,51 @@ const UserDashboard = ({ user }) => {
         const name = user.name
         const amount = parseFloat(form.amount.value);
         setMoneyChange(amount)
+        console.log(typeof(amount));
+        const type = "sendMoney"
+        const PIN = form.PIN.value;
 
         if(moneyChange> user.balance){
             alert("You do not have sufficient balance")
             return
         }
         const receiver = users.find(item => item.mobile === mobile)
+        console.log(receiver);
         if(!receiver){
             alert('Enter a Valid User Mobile Number.')
             return
         }
-        const sendMoney = {mobile, amount, receiver, email, name}
 
-        axiosPublic.patch(`/send-money/${mobile}`, 
-            {moneyChange: parseFloat(moneyChange)},
-        )
-        axiosPublic.patch(`/reduce-money/${user._id}`, 
-            {moneyChange: parseFloat(-moneyChange)},
-        )
-        axiosPublic.post("/transactions", sendMoney  )
-        alert(`${amount} money successfully sent to ${mobile}`)
+        const sendMoney = {mobile, amount, receiver, email, name, type}
+
+        try {
+            const response = await axiosPublic.post('/validate-pin', { name, PIN });
+      
+            if (response.data.valid) {
+                axiosPublic.patch(`/send-money/${receiver._id}`, 
+                    {moneyChange: parseFloat(moneyChange)},
+                ).then(res => console.log(res.data))
+
+                axiosPublic.patch(`/reduce-money/${user._id}`, 
+                    {moneyChange: parseFloat(-moneyChange)},
+                ).then(res => console.log(res.data))
+
+              const transactionResponse = await axiosPublic.post("/transactions", sendMoney  );
+              console.log(transactionResponse.data);
+              Swal.fire({
+                title: `${amount} BDT has been successfully sent to ${mobile}`,
+                // text: 'Do you want to continue',
+                icon: 'success',
+                confirmButtonText: 'Cool',
+                confirmButtonColor: "#87CEEB"
+              })
+            } else {
+              alert('Invalid PIN');
+            }
+          } catch (error) {
+            alert('An error occurred');
+          }
+
     };
 
     // CASH IN --------->
@@ -46,6 +72,7 @@ const UserDashboard = ({ user }) => {
         e.preventDefault()
         const form = e.target;
         const mobile = form.mobile.value;
+        const userMobile = user.mobile
         const name = user.name
         const agent = users.find(item => item.mobile === mobile)
         if(!agent){
@@ -54,17 +81,33 @@ const UserDashboard = ({ user }) => {
         }
         const request = "cashIn"
         const status = "Pending"
+        const type = "cashIn"
         const amount = parseFloat(form.amount.value);
         const email = user.email
-        const cashIn = { agent, amount, request, email, name, status };
+        const cashIn = { agent, amount, request, type, email, name, status, userMobile };
 
         const PIN = form.PIN.value;
-        if(PIN !== user.PIN){
-            alert("Invalid PIN")
-            return
-        }
-        axiosPublic.post("/transactions", cashIn  )
-        return alert("Cash In request sent to the agent and waiting for approval")    
+        
+        try {
+            const response = await axiosPublic.post('/validate-pin', { name, PIN });
+      
+            console.log("see if im triggering");
+            if (response.data.valid) {
+              const transactionResponse = await axiosPublic.post("/cash-in", cashIn  );
+              console.log(transactionResponse.data);
+              Swal.fire({
+                title: 'Cash In request sent to the agent and waiting for approval',
+                // text: 'Do you want to continue',
+                icon: 'success',
+                confirmButtonText: 'Cool',
+                confirmButtonColor: "#87CEEB"
+              })
+            } else {
+              alert('Invalid PIN');
+            }
+          } catch (error) {
+            alert('An error occurred');
+          }
     };
 
     // CASH OUT --------->
@@ -84,18 +127,32 @@ const UserDashboard = ({ user }) => {
         }
         const status = "Pending"
         const request = "cashOut"
-        
+        const type = "cashOut"
         const email = user.email
-        
-        const cashOut = { agent, amount, request, email, name, status };
-
+        const userMobile = user.mobile
         const PIN = form.PIN.value;
-        if(PIN !== user.PIN){
-            alert("Invalid PIN")
-            return
-        }
-        axiosPublic.post("/transactions", cashOut  )
-        return alert("Cash out request sent to the agent and waiting for approval")    
+        
+        const cashOut = { agent, amount, request, type, email, name, status, userMobile };
+
+        try {
+            const response = await axiosPublic.post('/validate-pin', { name, PIN });
+      
+            if (response.data.valid) {
+              const transactionResponse = await axiosPublic.post("/cash-in", cashOut  );
+              console.log(transactionResponse.data);
+              Swal.fire({
+                title: 'Cash Out request sent to the agent and waiting for approval',
+                // text: 'Do you want to continue',
+                icon: 'success',
+                confirmButtonText: 'Cool',
+                confirmButtonColor: "#87CEEB"
+              })
+            } else {
+              alert('Invalid PIN');
+            }
+          } catch (error) {
+            alert('An error occurred');
+          }
     };
 
     return (
@@ -110,7 +167,7 @@ const UserDashboard = ({ user }) => {
                     <h2 className=" text-4xl">Balance: {user.balance}</h2>
 
                     <div className="mx-auto flex justify-center mt-10">
-                        {user.status !== "Pending" ? (
+                        {user.status === "Pending" ? (
                             <h1 className="text-lg">
                                 Your Account is waiting for approval
                             </h1>

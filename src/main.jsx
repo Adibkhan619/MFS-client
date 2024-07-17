@@ -13,6 +13,7 @@ import UserDashboard from "./userDashboard/UserDashboard";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import Dashboard from "./dashboard/Dashboard";
 import SendMoney from "./userDashboard/SendMoney";
+import Transactions from "./adminDashboard/Transactions";
 const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
@@ -46,6 +47,11 @@ const router = createBrowserRouter([
              
             },
         ],
+    },
+    {
+       path: "/transactions",
+       element: <Transactions></Transactions>,
+       loader: () => fetch("http://localhost:5000/transactions")
     },
     {
         path: "/register",

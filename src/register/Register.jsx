@@ -6,7 +6,6 @@ import { Link,  useNavigate } from "react-router-dom";
 import { IoMdEye } from "react-icons/io";
 // import { updateProfile } from "firebase/auth";
 import "animate.css";
-import axios from "axios";
 import Swal from "sweetalert2";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 // import { AuthContext } from "../provider/AuthProvider";
