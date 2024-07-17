@@ -5,29 +5,29 @@ import UserDashboard from "../userDashboard/UserDashboard";
 import AdminDashboard from "../adminDashboard/AdminDashboard";
 
 const Dashboard = () => {
-    const [users] = useAllUsers()
-    // console.log(users);
+    const [users, , ] = useAllUsers()
+    console.log(users);
     const getUser = useParams()
-    // console.log(getUser);
+    console.log(getUser);
 
     
-    const user = users.find(item => item.email === getUser.email)
-    // console.log(user?.email);
+    const currentUser = users.find(item => item.email === getUser.email)
+    console.log(currentUser?.email);
 
     const userData = useLoaderData()
-    // console.log(userData);
+    console.log(userData);
 
     return (
         <div>
             {/* <Outlet></Outlet> */}
             {
-                userData.role === "Agent" && <AgentDashboard user={userData}></AgentDashboard>
+                userData.role === "Agent" && <AgentDashboard currentUser={userData}></AgentDashboard>
             }
             {
-                userData.role === "User" && <UserDashboard user={userData}></UserDashboard>
+                userData.role === "User" && <UserDashboard currentUser={userData}></UserDashboard>
             }
             {
-                userData.role === "Admin" && <AdminDashboard user={userData}></AdminDashboard>
+                userData.role === "Admin" && <AdminDashboard currentUser={userData}></AdminDashboard>
             }
         </div>
     );

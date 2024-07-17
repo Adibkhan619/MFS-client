@@ -2,12 +2,19 @@ import Swal from "sweetalert2";
 import useAxiosPublic from "../hooks/useAxiosPublic";
 import useCashIn from "../hooks/useCashIn";
 import { useState } from "react";
+import useAllUsers from "../hooks/useAllUsers";
 
-const AgentDashboard = ({ user }) => {
+const AgentDashboard = ({ currentUser }) => {
+    console.log(currentUser);
     const axiosPublic = useAxiosPublic()
     const [cashIn, ,refetch] = useCashIn();
+    const [users, ,] = useAllUsers()
+    console.log(users);
     const [moneyChange, setMoneyChange] = useState("")
     console.log(cashIn);
+
+    const user = users.find(item => item._id === currentUser?._id  )
+    console.log(user);
 
     const myCashInReq = cashIn.filter(
         (item) => item?.agent?.name === user?.name
@@ -16,11 +23,11 @@ const AgentDashboard = ({ user }) => {
 
     // CASH IN REQ----->
     const handleCashInReq = async(item) => {
-
+        console.log(item.id, 'amar id');
         const amount = parseFloat(item.amount);
         setMoneyChange(amount)
 
-        axiosPublic.patch(`/send-money/${item.userMobile}`, 
+        axiosPublic.patch(`/send-money/${item.id}`, 
             {moneyChange: parseFloat(moneyChange)},
         )
         axiosPublic.patch(`/reduce-money/${user._id}`, 
@@ -44,11 +51,11 @@ const AgentDashboard = ({ user }) => {
 
     return (
         <div className="text-center mx-auto my-10">
-            <h1 className="text-2xl">{user.role}</h1>
-            <h1 className="text-3xl">{user.name}</h1>
-            <h1 className="text-2xl">{user.email}</h1>
+            <h1 className="text-2xl">{user?.role}</h1>
+            <h1 className="text-3xl">{user?.name}</h1>
+            <h1 className="text-2xl">{user?.email}</h1>
 
-            <h1 className="text-4xl">Balance: {user.balance}</h1>
+            <h1 className="text-4xl">Balance: {user?.balance}</h1>
 
             {/* cash-in */}
             <div className="overflow-x-auto">

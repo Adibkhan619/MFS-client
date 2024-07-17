@@ -7,6 +7,7 @@ const AdminDashboard = () => {
     // const [moneyToAdd, setMoneyToAdd] = useState('');
     const axiosPublic = useAxiosPublic();
     const [users, , refetch] = useAllUsers();
+    console.log(users);
 
     const makeAgent = (item) => {
         axiosPublic

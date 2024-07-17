@@ -5,11 +5,15 @@ import useAxiosPublic from "../hooks/useAxiosPublic";
 import Swal from "sweetalert2";
 
 
-const UserDashboard = ({ user }) => {
+const UserDashboard = ({ currentUser }) => {
+    
     const axiosPublic = useAxiosPublic()
-    const [users] = useAllUsers()
+    const [users, , refetch] = useAllUsers()
     const [moneyChange, setMoneyChange] = useState("");
     // console.log(user);
+
+    const user = users.find(item => item._id === currentUser?._id  )
+    console.log(user);
 
     // SEND MONEY ------->
     const handleSendMoney = async (e) => {
@@ -29,7 +33,7 @@ const UserDashboard = ({ user }) => {
             return
         }
         const receiver = users.find(item => item.mobile === mobile)
-        console.log(receiver);
+        // console.log(receiver);
         if(!receiver){
             alert('Enter a Valid User Mobile Number.')
             return
@@ -43,11 +47,11 @@ const UserDashboard = ({ user }) => {
             if (response.data.valid) {
                 axiosPublic.patch(`/send-money/${receiver._id}`, 
                     {moneyChange: parseFloat(moneyChange)},
-                ).then(res => console.log(res.data))
+                )
 
                 axiosPublic.patch(`/reduce-money/${user._id}`, 
                     {moneyChange: parseFloat(-moneyChange)},
-                ).then(res => console.log(res.data))
+                )
 
               const transactionResponse = await axiosPublic.post("/transactions", sendMoney  );
               console.log(transactionResponse.data);
@@ -64,6 +68,7 @@ const UserDashboard = ({ user }) => {
           } catch (error) {
             alert('An error occurred');
           }
+          refetch()
 
     };
 
@@ -74,6 +79,7 @@ const UserDashboard = ({ user }) => {
         const mobile = form.mobile.value;
         const userMobile = user.mobile
         const name = user.name
+        const id = user._id
         const agent = users.find(item => item.mobile === mobile)
         if(!agent){
             alert('Enter Valid agent No.')
@@ -84,7 +90,7 @@ const UserDashboard = ({ user }) => {
         const type = "cashIn"
         const amount = parseFloat(form.amount.value);
         const email = user.email
-        const cashIn = { agent, amount, request, type, email, name, status, userMobile };
+        const cashIn = { agent, amount, request, type, email, id, name, status, userMobile };
 
         const PIN = form.PIN.value;
         
@@ -161,13 +167,13 @@ const UserDashboard = ({ user }) => {
             <div className="  ">
 
                 <div className="text-center">
-                    <h2 className="text-2xl"> {user.name}</h2>
-                    <h2 className="text-2xl"> {user.email}</h2>
-                    <h2 className="text-2xl"> {user.mobile}</h2>
-                    <h2 className=" text-4xl">Balance: {user.balance}</h2>
+                    <h2 className="text-2xl"> {user?.name}</h2>
+                    <h2 className="text-2xl"> {user?.email}</h2>
+                    <h2 className="text-2xl"> {user?.mobile}</h2>
+                    <h2 className=" text-4xl">Balance: {user?.balance}</h2>
 
                     <div className="mx-auto flex justify-center mt-10">
-                        {user.status === "Pending" ? (
+                        {user?.status === "Pending" ? (
                             <h1 className="text-lg">
                                 Your Account is waiting for approval
                             </h1>
